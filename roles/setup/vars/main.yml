@@ -1,0 +1,8 @@
+---
+openvpn_daemon: openvpn
+openvpn_config_path: /etc/openvpn
+openvpn_keys: /etc/openvpn/keys
+
+openvpn_packages:
+  - openvpn
+  - easy-rsa
