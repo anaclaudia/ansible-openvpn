@@ -1,0 +1,11 @@
+---
+- name: Installing a OpenVPN server
+  hosts: servers
+  become: yes
+  become_user: root
+  gather_facts: yes
+
+  roles:
+    - setup
+    - easy-rsa
+    - config-openvpn
