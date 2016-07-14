@@ -1,0 +1,37 @@
+---
+
+- lineinfile: dest=/etc/sysctl.conf regexp=^#net.ipv4.ip_forward=1 line=net.ipv4.ip_forward=1
+
+- name: Allow the IP Forwarding
+  shell: "sysctl -p"
+
+- name: Inserting Firewall Rules
+  blockinfile:
+    dest: /etc/ufw/before.rules
+    block: |
+      # OpenVPN Firewall Rules
+      #  NAT table rules
+      *nat
+      :POSTROUTING ACCEPT [0:0]
+
+      # Allow traffic from OpenVPN client
+      -A POSTROUTING -s 10.8.0.0/24 -o {{ ansible_default_ipv4.interface }} -j MASQUERADE
+      COMMIT
+      # END OpenVPN Firewall Rules
+
+- lineinfile: dest=/etc/default/ufw regexp=^DEFAULT_FORWARD_POLICY="DROP" line=DEFAULT_FORWARD_POLICY="ACCEPT"
+
+- ufw: rule=allow port=1194 proto=tcp
+
+- ufw: rule=allow port=22 proto=tcp
+
+- ufw: state=disabled
+
+- ufw: state=enabled
+
+- name: Copying the server config file
+  template:
+    src: server.conf.j2
+    dest: "{{ openvpn_config_dir }}/server.conf"
+  tags:
+    - configuration
