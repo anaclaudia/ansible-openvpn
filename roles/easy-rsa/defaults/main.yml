@@ -1,0 +1,15 @@
+---
+# defaults values for easy_rsa 'vars' file
+
+
+easy_rsa_ca_expire: 3650
+easy_rsa_clients: ['client1']
+easy_rsa_key_city: "SaoPaulo"
+easy_rsa_key_country: "BR"
+easy_rsa_key_email: "admin@mydomain.com"
+easy_rsa_key_expire: 3650
+easy_rsa_key_name: "EasyRSA"
+easy_rsa_key_org: "MyCompany"
+easy_rsa_key_ou: "MyOrganizationalUnit"
+easy_rsa_key_province: "SP"
+easy_rsa_key_size: 2048
