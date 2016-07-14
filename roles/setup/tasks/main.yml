@@ -1,0 +1,11 @@
+---
+- name: Adding the GPG key
+  apt_key:
+    url: https://swupdate.openvpn.net/repos/repo-public.gpg
+    state: present
+
+- name: Installing OpenVPN
+  apt:
+    name: "{{ item }}"
+    state: latest
+  with_items: "{{ openvpn_packages }}"
