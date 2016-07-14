@@ -1,0 +1,54 @@
+---
+
+- name: Creating the CA directory
+  command: make-cadir {{ easy_rsa_ca_dir }}
+  args:
+    creates: "{{ easy_rsa_ca_dir }}"
+
+- name: Creates the key directory
+  file:
+    path: "{{ easy_rsa_key_dir }}"
+    state: directory
+    mode: 0770
+    owner: root
+    group: root
+
+- name: Copying the vars file
+  template:
+    src: vars.j2
+    dest: "{{ easy_rsa_ca_dir }}/vars"
+    owner: root
+    group: root
+    mode: 0744
+
+- name: Generating the keys directory
+  shell: ". ./vars; ./clean-all > /dev/null"
+  args:
+    chdir: "{{ easy_rsa_ca_dir }}"
+    creates: "{{ easy_rsa_key_dir }}/index.txt"
+
+- name: Creating the CA Authority
+  shell: ". ./vars; ./clean-all; ./pkitool --initca > /dev/null"
+  args:
+    chdir: "{{ easy_rsa_ca_dir }}"
+    creates: "{{ easy_rsa_key_dir }}/ca.key"
+
+- name: Creating the Server Certificate
+  shell: ". ./vars; ./pkitool --server {{ easy_rsa_key_name }}"
+  args:
+    chdir: "{{ easy_rsa_ca_dir }}"
+    creates: "{{ easy_rsa_key_dir }}/{{ easy_rsa_key_name }}.key"
+
+- name: Gerenerate a strong Diffie-Hellman Key
+  shell: ". ./vars; ./build-dh"
+  args:
+    chdir: "{{ easy_rsa_ca_dir }}"
+    creates: "{{ easy_rsa_key_dir }}/dh{{ easy_rsa_key_size }}.pem"
+
+- name: Generate an client certificate
+  become: yes
+  shell: ". ./vars; ./pkitool {{ item }}"
+  args:
+    chdir: "{{ easy_rsa_ca_dir }}"
+    creates: "{{ easy_rsa_key_dir }}/{{ item }}.key"
+  with_items: "{{ easy_rsa_clients }}"
