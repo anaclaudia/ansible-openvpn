@@ -1,4 +1,4 @@
 ---
 
-easy_rsa_ca_dir: /etc/easy-rsa
-easy_rsa_key_dir: /etc/easy-rsa/keys
+easy_rsa_ca_dir: /etc/openvpn/easy-rsa
+easy_rsa_key_dir: /etc/openvpn/keys
