@@ -1,9 +1,9 @@
----
 
+---
 - name: Creating the CA directory
-  command: make-cadir {{ easy_rsa_ca_dir }}
+  command: make-cadir "{{ easy_rsa_ca_dir }}"
   args:
-    creates: "{{ easy_rsa_ca_dir }}"
+    creates: "{{ easy_rsa_ca_dir }}/clean-all"
 
 - name: Creates the key directory
   file:
