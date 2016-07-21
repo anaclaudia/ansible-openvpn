@@ -35,3 +35,23 @@
     dest: "{{ openvpn_config_dir }}/server.conf"
   tags:
     - configuration
+
+- name: Creating the HMAC Signature (TLS integrity verification)
+  shell: "openvpn --genkey --secret {{ easy_rsa_key_dir }}/ta.key"
+  args:
+    creates: "{{ easy_rsa_key_dir }}/ta.key"
+  tags:
+    - configuration
+
+- name: Copying the keys and certificates to openvpn's directory
+  shell:  "cp ta.key ca.key ca.crt {{ easy_rsa_key_name }}.crt {{ easy_rsa_key_name}}.key dh{{ easy_rsa_key_size }}.pem /etc/openvpn"
+  args:
+    chdir: "{{ easy_rsa_key_dir }}"
+
+- name: Starting OpenVPN service
+  service:
+    name: openvpn@server
+    state: started
+    enabled: yes
+  tags:
+    - start
